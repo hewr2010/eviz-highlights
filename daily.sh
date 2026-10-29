@@ -8,6 +8,9 @@
 # 敏感信息全部从 .secrets.yml 读（ezviz_common），本脚本和代码里都没有硬编码密钥。
 set -euo pipefail
 
+# bypy 可能装在 ~/.local/bin（uv tool），确保在 PATH 里
+export PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
+
 if [ "${1:-}" = "today" ]; then
   DATE="$(date +%F)"          # 当天（傍晚 6 点用）
 elif [ -n "${1:-}" ]; then
