@@ -89,8 +89,20 @@ scripts/install_launchd.sh install
 **集锦太长/太短？**
 `fetch_events.py` 支持环境变量：`MERGE_GAP_MS`（合并间隔）、`PRE_PAD_MS`/`POST_PAD_MS`（前后预留）、`MAX_CLIP_MS`（单段上限）。例：`MAX_CLIP_MS=30000 ./daily.sh` 把每段截到 30s。
 
-**虚拟机/网络？**
-下载和检测都在 Lima 虚拟机里跑，虚拟机通过 NAT 共享本机网络，能直接访问局域网摄像头。`limactl shell ezviz` 可进虚拟机调试。
+**虚拟机连不上摄像头（Connection refused / err=7）？**
+先跑 `scripts/diagnose.sh` 定位。典型现象：宿主机 `nc -z 摄像头IP 8000` 能通，但 Lima 虚拟机里连摄像头 8000 被 **Connection refused**。原因是 Lima 默认 vzNAT 对"局域网内其他设备"的流量**不伪装成本机 IP**，摄像头认出虚拟机来源是外来网段（192.168.5.x）就拒了。
+
+修法（桥接网络，让虚拟机拿到真正的局域网 IP）：
+```bash
+brew install socket_vmnet
+sudo brew services start socket_vmnet
+# Lima 要求 socket_vmnet 在 root 拥有的目录（不能是 symlink、不能属普通用户）：
+sudo mkdir -p /opt/socket_vmnet/bin
+sudo cp "$(brew --cellar socket_vmnet)"/$(brew list --versions socket_vmnet | awk '{print $2}')/bin/socket_vmnet /opt/socket_vmnet/bin/
+sudo chown -R root:wheel /opt/socket_vmnet
+# 把虚拟机切成桥接（lima.yaml 加 networks: [lima: bridged]）后重启
+```
+验证：`limactl shell ezviz -- ip addr show eth0` 应拿到 192.168.x.x（和摄像头同网段），且能连通摄像头 8000。
 
 **换电脑/重装？**
 `git clone` 本仓库 → `scripts/setup_vm.sh` → 填 `.secrets.yml` → `bypy quota` 授权 → `install_launchd.sh install`。
