@@ -10,7 +10,7 @@ import ezviz_common as ec
 DETENV = os.path.expanduser("~/detenv/bin/python")
 
 def main():
-    date, clips_dir = sys.argv[1], sys.argv[2]
+    date, clips_dir = sys.argv[1], os.path.expanduser(sys.argv[2])
     os.makedirs(clips_dir, exist_ok=True)
     clips = json.load(open(f"clips_{date}.json"))
     by_cam = {}

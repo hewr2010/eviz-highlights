@@ -7,7 +7,7 @@
 import os, re, subprocess, sys
 
 def main():
-    clips_dir, out = sys.argv[1], sys.argv[2]
+    clips_dir, out = os.path.expanduser(sys.argv[1]), os.path.expanduser(sys.argv[2])
     files = [f for f in os.listdir(clips_dir) if f.endswith(".mp4")]
     def ts(f):
         m = re.search(r"_(\d{6})\.mp4$", f)
