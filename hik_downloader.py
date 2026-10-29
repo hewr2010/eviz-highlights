@@ -77,7 +77,7 @@ def ps_to_mp4(ps, mp4):
     return r.returncode == 0
 
 def main():
-    clips_fn, out_dir, serial = sys.argv[1], os.path.expanduser(sys.argv[2]), sys.argv[3]
+    clips_fn, out_dir, serial = sys.argv[1], os.path.expandvars(sys.argv[2]), sys.argv[3]
     cam = ec.camera_by_serial(serial)
     if not cam:
         print(f"cameras 里找不到 {serial}"); sys.exit(1)

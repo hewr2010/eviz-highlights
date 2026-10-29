@@ -23,7 +23,7 @@ def dur(mp4):
         return 0.0
 
 def main():
-    serial, date, out_dir = sys.argv[1], sys.argv[2], os.path.expanduser(sys.argv[3])
+    serial, date, out_dir = sys.argv[1], sys.argv[2], os.path.expandvars(sys.argv[3])
     cam = ec.camera_by_serial(serial)
     if not cam:
         print(f"cameras 里找不到 {serial}"); sys.exit(1)
