@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.ezviz.daily.pm</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/hwr/.agents/skills/eviz-highlights/daily.sh</string>
+    <string>today</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict><key>Hour</key><integer>18</integer><key>Minute</key><integer>0</integer></dict>
+  <key>StandardOutPath</key><string>/tmp/ezviz-daily-pm.log</string>
+  <key>StandardErrorPath</key><string>/tmp/ezviz-daily-pm.log</string>
+</dict>
+</plist>
