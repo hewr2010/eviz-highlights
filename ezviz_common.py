@@ -48,10 +48,19 @@ def bark_key():
 def netdisk_dir():
     return load_secrets().get("netdisk_dir", "ezviz-highlights")
 
+def request_with_retry(req, timeout=20, attempts=4):
+    for attempt in range(attempts):
+        try:
+            return urllib.request.urlopen(req, timeout=timeout)
+        except (urllib.error.URLError, TimeoutError):
+            if attempt == attempts - 1:
+                raise
+            time.sleep(2 ** attempt)
+
 def get_token():
     data = urllib.parse.urlencode({"appKey": app_key(), "appSecret": app_secret()}).encode()
-    r = json.loads(urllib.request.urlopen(
-        urllib.request.Request("https://open.ys7.com/api/lapp/token/get", data=data), timeout=20).read().decode())
+    r = json.loads(request_with_retry(
+        urllib.request.Request("https://open.ys7.com/api/lapp/token/get", data=data)).read().decode())
     if str(r.get("code")) != "200":
         raise RuntimeError(f"获取 accessToken 失败: {r}")
     return r["data"]["accessToken"]
@@ -60,7 +69,7 @@ def api_post(path, data, timeout=20):
     body = urllib.parse.urlencode(data).encode()
     req = urllib.request.Request(f"https://open.ys7.com{path}", data=body,
                                  headers={"Content-Type": "application/x-www-form-urlencoded"})
-    return json.loads(urllib.request.urlopen(req, timeout=timeout).read().decode())
+    return json.loads(request_with_retry(req, timeout=timeout).read().decode())
 
 def day_range_ms(date_str):
     """'YYYY-MM-DD' -> (当天0点 ms, 当天结束 ms)（本地时区）"""

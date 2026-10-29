@@ -40,8 +40,7 @@ for i in $(seq 1 30); do limactl shell "$VM" -- true 2>/dev/null && break; sleep
 echo "==> 虚拟机内安装依赖（ffmpeg / python 库 / 检测 venv）"
 limactl shell "$VM" -- bash -c '
   sudo apt-get update -qq
-  sudo apt-get install -y -qq ffmpeg python3-pip python3-venv strace >/dev/null
-  python3 -m pip install --quiet pyyaml 2>/dev/null || sudo python3 -m pip install --quiet pyyaml
+  sudo apt-get install -y -qq ffmpeg python3-pip python3-venv python3-yaml strace >/dev/null
   [ -d ~/detenv ] || python3 -m venv ~/detenv
   ~/detenv/bin/pip install --quiet --upgrade pip
   ~/detenv/bin/pip install --quiet onnxruntime opencv-python-headless numpy pyyaml
@@ -51,7 +50,7 @@ echo "==> 下载海康 HCNetSDK（ARM64 Linux 版）"
 limactl shell "$VM" -- bash -c "
   [ -f ~/hcnetsdk/MakeAll/libhcnetsdk.so ] || {
     mkdir -p /tmp/sdk && curl -sL --max-time 180 -o /tmp/sdk/sdk.tar.gz '$SDK_REPO'
-    mkdir -p ~/hcnetsdk && tar xzf /tmp/sdk.tar.gz -C ~/hcnetsdk --strip-components=1
+    mkdir -p ~/hcnetsdk && tar xzf /tmp/sdk/sdk.tar.gz -C ~/hcnetsdk --strip-components=1
     rm -rf /tmp/sdk
   }
   ls ~/hcnetsdk/MakeAll/libhcnetsdk.so
